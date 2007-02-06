@@ -1,0 +1,70 @@
+The "components" plugin
+=======================
+
+This is a collection of component-related enhancements for Rails.
+
+For now, it just includes:
+- Cacheable components
+- render_as_component
+
+See below for more information
+
+-------------------------------------------------------------------------------
+Copyright (c) 2006 Sebastian Delmont <sd@notso.net>
+Copyright (c) 2006 StreetEasy LLC <http://www.streeteasy.com/>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of Sebastian Delmont, nor StreetEasy LLC nor the names of his contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-------------------------------------------------------------------------------
+
+*** CACHEABLE COMPONENTS ***
+
+Components are great candidates for fragment caching. If you have an action called "sample_component" on your TestController, you can do something like:
+
+class TestController < ActiveController::Base
+  caches_component :sample_component
+  def sample_component
+    # ... do some stuff ...
+    render :layout => false
+  end
+end
+
+Note the "caches_component" statement. That's what activates fragment caching for any render_component call on sample_component.
+
+You need to enable fragment caching. The simplest way is to create a "cache" directory on your RAILS_ROOT and adding the following to environment.rb
+
+  config.action_controller.fragment_cache_store = [:file_store, "#{RAILS_ROOT}/cache"]
+
+If a component throws an exception when rendering it, then it won't be cached.
+
+And remember that caching is disabled by default on development mode.
+
+-------------------------------------------------------------------------------
+
+*** render_as_component ***
+  Instead of calling
+      render :template => "my_controller/components/component_name", 
+             :layout => false
+  at the end of each of your component actions, just add "render_as_component".
+  
+      def my_component
+         # ...
+         render_as_component
+      end
+  
+  you can even pass any of the regular render options, like :action, :template, :layout, etc. All it provides are default values for :template and :layout.
+  
+-------------------------------------------------------------------------------
+
+RELEASE HISTORY
+
+1.0 (25-Jun-2006) : Initial release. Cacheable components.
+1.1 (21-Aug-2006) : Uhm, yeah, now they actually work as intended
+1.2 (26-Sep-2006) : Components don't get cached if they raise exceptions
+1.3 (05-Oct-2006) : Added render_as_component, a shortcut for actions
