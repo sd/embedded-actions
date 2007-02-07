@@ -140,7 +140,3 @@ module ActionController  #:nodoc:
 
   # Psst... psst... the emperor has no clothes
 end
-
-class ActionController::Base
-  include ::ActionController::EmbeddedActions
-end
