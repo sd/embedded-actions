@@ -9,8 +9,8 @@ module ActionController  #:nodoc:
       base.extend(ClassMethods)
 
       base.helper do
-        def render_embeded(options)
-          @controller.send(:render_embeded_as_string, options)
+        def embed_action(options)
+          @controller.send(:embed_action_as_string, options)
         end
       end
 
@@ -50,19 +50,19 @@ module ActionController  #:nodoc:
 
       protected
         # Renders the embeded action specified as the response for the current method
-        def render_embeded(options) #:doc:
+        def embed_action(options) #:doc:
           embeded_logging(options) do
             render_text(embeded_response(options, true).body, response.headers["Status"])
           end
         end
 
         # Returns the embeded action response as a string
-        def render_embeded_as_string(options) #:doc:
+        def embed_action_as_string(options) #:doc:
           embeded_logging(options) do
             response = embeded_response(options, false)
 
             if redirected = response.redirected_to
-              render_embeded_as_string(redirected)
+              embed_action_as_string(redirected)
             else
               response.body
             end
