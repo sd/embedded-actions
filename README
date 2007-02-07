@@ -1,10 +1,11 @@
-The "embeded actions" plugin 
-============================
+The "embedded actions" plugin 
+=============================
 
-Just like the traditional render :partial, embeded actions allow you to refactor
-your views and extract presentation logic and templates into separate files.
+Just like the traditional render :partial, embedded actions allow you to
+refactor your views and extract presentation logic and templates into separate
+files.
 
-Unlike partials, embeded actions also let you define business logic to be
+Unlike partials, embedded actions also let you define business logic to be
 performed before the partial is included. That logic is encapsulated in the
 already well understood metaphor of an action inside a controller.
 
@@ -15,9 +16,10 @@ So a simple call like
 lets you include an html fragment containing the top 10 songs into any of your
 pages, regardless of which controller, action or view wants to do the including.
 
-Additionally, embeded actions can provide caching of their results (allowing for
-different parameters) just like page caching, but at the level of html
-fragments. So your dynamic pages can still be rendered dynamically, but some of the embeded actions can be cached (and expired) independently.
+Additionally, embedded actions can provide caching of their results (allowing
+for different parameters) just like page caching, but at the level of html
+fragments. So your dynamic pages can still be rendered dynamically, but some of
+the embedded actions can be cached (and expired) independently.
 
 -------------------------------------------------------------------------------
 Copyright (c) 2007 Sebastian Delmont <sd@notso.net> 

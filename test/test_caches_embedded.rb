@@ -1,5 +1,5 @@
 ENV["RAILS_ENV"] = "test"
-# To test the embeded_actions plugin, we use a minimal rails setup located in the 'test/rails' directory.
+# To test the embedded_actions plugin, we use a minimal rails setup located in the 'test/rails' directory.
 # The following line loads that rails app environment
 require File.expand_path(File.dirname(__FILE__) + "/rails/config/environment")
 require 'application'
@@ -19,41 +19,41 @@ require 'test_help'
 # Re-raise errors caught by the controller.
 class TestController; def rescue_action(e) raise e end; end
 
-class CachesEmbededTest < Test::Unit::TestCase
+class CachesEmbeddedTest < Test::Unit::TestCase
   def setup
-    @controller = EmbededActionsTestController.new
+    @controller = EmbeddedActionsTestController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     FileUtils.rm_rf "#{RAILS_ROOT}/tmp/cache/test.host"
   end
 
-  def test_embeded_caching
-    EmbededActionsTestController.test_value = 1
-    get :page_with_embeded_actions
+  def test_embedded_caching
+    EmbeddedActionsTestController.test_value = 1
+    get :page_with_embedded_actions
     assert_equal "regular value is 1\ncached value is 1", @response.body
 
-    EmbededActionsTestController.test_value = 2
-    get :page_with_embeded_actions
+    EmbeddedActionsTestController.test_value = 2
+    get :page_with_embedded_actions
     assert_equal "regular value is 2\ncached value is 1", @response.body
     
-    @controller.expire_embeded :controller => "embeded_actions_test", :action => "cached_action"
-    get :page_with_embeded_actions
+    @controller.expire_embedded :controller => "embedded_actions_test", :action => "cached_action"
+    get :page_with_embedded_actions
     assert_equal "regular value is 2\ncached value is 2", @response.body
   end
 
-  def test_embeded_caching_overrides
-    # This page uses explicit overrides to reverse which embeded actions are cached
+  def test_embedded_caching_overrides
+    # This page uses explicit overrides to reverse which embedded actions are cached
     
-    EmbededActionsTestController.test_value = 1
-    get :page_with_embeded_actions_and_overrides
+    EmbeddedActionsTestController.test_value = 1
+    get :page_with_embedded_actions_and_overrides
     assert_equal "regular value is 1\ncached value is 1", @response.body
 
-    EmbededActionsTestController.test_value = 2
-    get :page_with_embeded_actions_and_overrides
+    EmbeddedActionsTestController.test_value = 2
+    get :page_with_embedded_actions_and_overrides
     assert_equal "regular value is 1\ncached value is 2", @response.body
     
-    @controller.expire_embeded :controller => "embeded_actions_test", :action => "regular_action"
-    get :page_with_embeded_actions_and_overrides
+    @controller.expire_embedded :controller => "embedded_actions_test", :action => "regular_action"
+    get :page_with_embedded_actions_and_overrides
     assert_equal "regular value is 2\ncached value is 2", @response.body
   end
 end

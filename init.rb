@@ -1,3 +1,3 @@
 require 'detect_rescue_action'
 require 'embed_action'
-require 'caches_embeded'
+require 'caches_embedded'
