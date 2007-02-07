@@ -1,9 +1,9 @@
 module ActionController  #:nodoc:
-  # Embeded Actions are just like regular actions, but they are referenced from
+  # Embedded Actions are just like regular actions, but they are referenced from
   # inside other actions, or rather, inside other views.
   # They are similar to a partial, but preceded by the execution of an action.
 
-  module EmbededActions
+  module EmbeddedActions
     def self.included(base) # :nodoc:
       base.send :include, InstanceMethods
       base.extend(ClassMethods)
@@ -14,27 +14,27 @@ module ActionController  #:nodoc:
         end
       end
 
-      # If this controller was instantiated to process an embeded request,
+      # If this controller was instantiated to process an embedded request,
       # +parent_controller+ points to the instantiator of this controller.
       base.send :attr_accessor, :parent_controller
 
       base.class_eval do
-        alias_method :process_cleanup_without_embeded, :process_cleanup
-        alias_method :process_cleanup, :process_cleanup_with_embeded
+        alias_method :process_cleanup_without_embedded, :process_cleanup
+        alias_method :process_cleanup, :process_cleanup_with_embedded
 
-        alias_method :set_session_options_without_embeded, :set_session_options
-        alias_method :set_session_options, :set_session_options_with_embeded
+        alias_method :set_session_options_without_embedded, :set_session_options
+        alias_method :set_session_options, :set_session_options_with_embedded
 
-        alias_method :flash_without_embeded, :flash
-        alias_method :flash, :flash_with_embeded
+        alias_method :flash_without_embedded, :flash
+        alias_method :flash, :flash_with_embedded
 
-        alias_method :embeded_request?, :parent_controller
+        alias_method :embedded_request?, :parent_controller
       end
     end
 
     module ClassMethods
-      # Track parent controller to identify embeded requests
-      def process_with_embeded(request, response, parent_controller = nil) #:nodoc:
+      # Track parent controller to identify embedded requests
+      def process_with_embedded(request, response, parent_controller = nil) #:nodoc:
         controller = new
         controller.parent_controller = parent_controller
         controller.process(request, response)
@@ -43,23 +43,23 @@ module ActionController  #:nodoc:
 
     module InstanceMethods
       # Extracts the action_name from the request parameters and performs that action.
-      def process_with_embeded(request, response, method = :perform_action, *arguments) #:nodoc:
-        flash.discard if embeded_request?
-        process_without_embeded(request, response, method, *arguments)
+      def process_with_embedded(request, response, method = :perform_action, *arguments) #:nodoc:
+        flash.discard if embedded_request?
+        process_without_embedded(request, response, method, *arguments)
       end
 
       protected
-        # Renders the embeded action specified as the response for the current method
+        # Renders the embedded action specified as the response for the current method
         def embed_action(options) #:doc:
-          embeded_logging(options) do
-            render_text(embeded_response(options, true).body, response.headers["Status"])
+          embedded_logging(options) do
+            render_text(embedded_response(options, true).body, response.headers["Status"])
           end
         end
 
-        # Returns the embeded action response as a string
+        # Returns the embedded action response as a string
         def embed_action_as_string(options) #:doc:
-          embeded_logging(options) do
-            response = embeded_response(options, false)
+          embedded_logging(options) do
+            response = embedded_response(options, false)
 
             if redirected = response.redirected_to
               embed_action_as_string(redirected)
@@ -69,13 +69,13 @@ module ActionController  #:nodoc:
           end
         end
 
-        def flash_with_embeded(refresh = false) #:nodoc:
+        def flash_with_embedded(refresh = false) #:nodoc:
           if @flash.nil? || refresh
             @flash =
               if @parent_controller
                 @parent_controller.flash
               else
-                flash_without_embeded
+                flash_without_embedded
               end
           end
 
@@ -83,16 +83,16 @@ module ActionController  #:nodoc:
         end
 
       private
-        def embeded_response(options, reuse_response)
-          klass    = embeded_class(options)
-          request  = request_for_embeded(klass.controller_name, options)
+        def embedded_response(options, reuse_response)
+          klass    = embedded_class(options)
+          request  = request_for_embedded(klass.controller_name, options)
           response = reuse_response ? @response : @response.dup
 
-          klass.process_with_embeded(request, response, self)
+          klass.process_with_embedded(request, response, self)
         end
 
-        # determine the controller class for the embeded action request
-        def embeded_class(options)
+        # determine the controller class for the embedded action request
+        def embedded_class(options)
           if controller = options[:controller]
             controller.is_a?(Class) ? controller : "#{controller.camelize}Controller".constantize
           else
@@ -102,8 +102,8 @@ module ActionController  #:nodoc:
 
         # Create a new request object based on the current request.
         # The new request inherits the session from the current request,
-        # bypassing any session options set for the embeded action controller's class
-        def request_for_embeded(controller_name, options)
+        # bypassing any session options set for the embedded action controller's class
+        def request_for_embedded(controller_name, options)
           request         = @request.dup
           request.session = @request.session
 
@@ -117,23 +117,23 @@ module ActionController  #:nodoc:
           request
         end
 
-        def embeded_logging(options)
+        def embedded_logging(options)
           if logger
-            logger.info "Start rendering embeded action (#{options.inspect}): "
+            logger.info "Start rendering embedded action (#{options.inspect}): "
             result = yield
-            logger.info "\n\nEnd of embeded action rendering"
+            logger.info "\n\nEnd of embedded action rendering"
             result
           else
             yield
           end
         end
 
-        def set_session_options_with_embeded(request)
-          set_session_options_without_embeded(request) unless embeded_request?
+        def set_session_options_with_embedded(request)
+          set_session_options_without_embedded(request) unless embedded_request?
         end
 
-        def process_cleanup_with_embeded
-          process_cleanup_without_embeded unless embeded_request?
+        def process_cleanup_with_embedded
+          process_cleanup_without_embedded unless embedded_request?
         end
     end
   end
@@ -142,5 +142,5 @@ module ActionController  #:nodoc:
 end
 
 class ActionController::Base
-  include ::ActionController::EmbededActions
+  include ::ActionController::EmbeddedActions
 end
