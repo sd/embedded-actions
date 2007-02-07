@@ -24,11 +24,11 @@ class ActionController::Base
     expire_fragment(options)
   end
   
-  def render_embeded_as_string_with_caching(options)
-    return render_embeded_as_string_without_caching(options) unless self.cache_embeded?(options)
+  def embed_action_as_string_with_caching(options)
+    return embed_action_as_string_without_caching(options) unless self.cache_embeded?(options)
 
     unless cached = send(:read_fragment, options)
-      cached = render_embeded_as_string_without_caching(options)
+      cached = embed_action_as_string_without_caching(options)
       if (cached.exception_rescued rescue false)  # rescue NoMethodError
         RAILS_DEFAULT_LOGGER.debug "Embeded action was not cached because it resulted in an error"
       else
@@ -39,6 +39,6 @@ class ActionController::Base
     cached
   end
 
-  alias_method :render_embeded_as_string_without_caching, :render_embeded_as_string
-  alias_method :render_embeded_as_string, :render_embeded_as_string_with_caching  
+  alias_method :embed_action_as_string_without_caching, :embed_action_as_string
+  alias_method :embed_action_as_string, :embed_action_as_string_with_caching  
 end

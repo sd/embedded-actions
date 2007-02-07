@@ -1,4 +1,4 @@
-The "embed_action" plugin 
+The "embeded actions" plugin 
 ============================
 
 Just like the traditional render :partial, embeded actions allow you to refactor
@@ -21,7 +21,7 @@ fragments. So your dynamic pages can still be rendered dynamically, but some of 
 
 -------------------------------------------------------------------------------
 Copyright (c) 2007 Sebastian Delmont <sd@notso.net> 
-Copyright (c) 2007 StreetEasy LLC <http://www.streeteasy.com/> 
+Copyright (c) 2007 StreetEasy / NMD Interactive <http://www.streeteasy.com/> 
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,

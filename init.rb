@@ -1,5 +1,3 @@
 require 'detect_rescue_action'
-require 'render_embeded'
+require 'embed_action'
 require 'caches_embeded'
-
-

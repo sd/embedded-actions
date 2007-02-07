@@ -50,7 +50,7 @@ class CachesEmbededTest < Test::Unit::TestCase
 
     EmbededActionsTestController.test_value = 2
     get :page_with_embeded_actions_and_overrides
-    assert_equal "regular value is 2\ncached value is 2", @response.body
+    assert_equal "regular value is 1\ncached value is 2", @response.body
     
     @controller.expire_embeded :controller => "embeded_actions_test", :action => "regular_action"
     get :page_with_embeded_actions_and_overrides
