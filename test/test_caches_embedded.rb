@@ -56,4 +56,23 @@ class CachesEmbeddedTest < Test::Unit::TestCase
     get :page_with_embedded_actions_and_overrides
     assert_equal "regular value is 2\ncached value is 2", @response.body
   end
+
+  def test_embedded_caching_refresh
+    # This page uses explicit overrides to force refreshing the cache
+    
+    EmbeddedActionsTestController.test_value = 1
+    get :page_with_forced_refresh
+    assert_equal "regular value is 1\ncached value is 1", @response.body
+
+    EmbeddedActionsTestController.test_value = 2
+    get :page_with_forced_refresh
+    assert_equal "regular value is 2\ncached value is 1", @response.body
+    
+    get :page_with_forced_refresh, :refresh => true
+    assert_equal "regular value is 2\ncached value is 2", @response.body
+
+    EmbeddedActionsTestController.test_value = 3
+    get :page_with_forced_refresh
+    assert_equal "regular value is 3\ncached value is 2", @response.body
+  end
 end

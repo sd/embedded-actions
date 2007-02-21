@@ -22,5 +22,8 @@ class EmbeddedActionsTestController < ActionController::Base
   def page_with_embedded_actions_and_overrides
   end
 
+  def page_with_forced_refresh
+  end
+
 end
 

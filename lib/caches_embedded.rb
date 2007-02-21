@@ -39,9 +39,10 @@ module ActionController
       end
   
       def embed_action_as_string_with_caching(options)
+        force_refresh = options.delete :refresh_cache
         return embed_action_as_string_without_caching(options) unless self.cache_embedded?(options)
 
-        unless cached = send(:read_fragment, options)
+        unless not force_refresh and cached = send(:read_fragment, options)
           cached = embed_action_as_string_without_caching(options)
           if (cached.exception_rescued rescue false)  # rescue NoMethodError
             RAILS_DEFAULT_LOGGER.debug "Embedded action was not cached because it resulted in an error"
