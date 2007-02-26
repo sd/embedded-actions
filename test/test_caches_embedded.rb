@@ -3,6 +3,7 @@ ENV["RAILS_ENV"] = "test"
 # The following line loads that rails app environment
 require File.expand_path(File.dirname(__FILE__) + "/rails/config/environment")
 require 'application'
+require 'test_controller'
 
 require 'test/unit'  
 require 'action_controller/test_process'
@@ -21,58 +22,58 @@ class TestController; def rescue_action(e) raise e end; end
 
 class CachesEmbeddedTest < Test::Unit::TestCase
   def setup
-    @controller = EmbeddedActionsTestController.new
+    @controller = TestController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     FileUtils.rm_rf "#{RAILS_ROOT}/tmp/cache/test.host"
   end
 
   def test_embedded_caching
-    EmbeddedActionsTestController.test_value = 1
-    get :page_with_embedded_actions
+    TestController.test_value = 1
+    get :embedded_actions
     assert_equal "regular value is 1\ncached value is 1", @response.body
 
-    EmbeddedActionsTestController.test_value = 2
-    get :page_with_embedded_actions
+    TestController.test_value = 2
+    get :embedded_actions
     assert_equal "regular value is 2\ncached value is 1", @response.body
     
     @controller.expire_embedded :controller => "embedded_actions_test", :action => "cached_action"
-    get :page_with_embedded_actions
+    get :embedded_actions
     assert_equal "regular value is 2\ncached value is 2", @response.body
   end
 
   def test_embedded_caching_overrides
     # This page uses explicit overrides to reverse which embedded actions are cached
     
-    EmbeddedActionsTestController.test_value = 1
-    get :page_with_embedded_actions_and_overrides
+    TestController.test_value = 1
+    get :embedded_with_overrides
     assert_equal "regular value is 1\ncached value is 1", @response.body
 
-    EmbeddedActionsTestController.test_value = 2
-    get :page_with_embedded_actions_and_overrides
+    TestController.test_value = 2
+    get :embedded_with_overrides
     assert_equal "regular value is 1\ncached value is 2", @response.body
     
     @controller.expire_embedded :controller => "embedded_actions_test", :action => "regular_action"
-    get :page_with_embedded_actions_and_overrides
+    get :embedded_with_overrides
     assert_equal "regular value is 2\ncached value is 2", @response.body
   end
 
   def test_embedded_caching_refresh
     # This page uses explicit overrides to force refreshing the cache
     
-    EmbeddedActionsTestController.test_value = 1
-    get :page_with_forced_refresh
+    TestController.test_value = 1
+    get :forced_refresh
     assert_equal "regular value is 1\ncached value is 1", @response.body
 
-    EmbeddedActionsTestController.test_value = 2
-    get :page_with_forced_refresh
+    TestController.test_value = 2
+    get :forced_refresh
     assert_equal "regular value is 2\ncached value is 1", @response.body
     
-    get :page_with_forced_refresh, :refresh => true
+    get :forced_refresh, :refresh => true
     assert_equal "regular value is 2\ncached value is 2", @response.body
 
-    EmbeddedActionsTestController.test_value = 3
-    get :page_with_forced_refresh
+    TestController.test_value = 3
+    get :forced_refresh
     assert_equal "regular value is 3\ncached value is 2", @response.body
   end
 end

@@ -11,19 +11,21 @@ class TestController < ActionController::Base
   
   def regular_action
     @id = params[:id]
-    @value = EmbeddedActionsTestController.test_value || "N/A"
+    @value = TestController.test_value || "N/A"
     
     render :template => "test/value", :layout => false
   end
   
-  def page_with_embedded_actions
+  def embedded_actions
   end
 
-  def page_with_embedded_actions_and_overrides
+  def embedded_with_overrides
   end
 
-  def page_with_forced_refresh
+  def forced_refresh
   end
-
+  
+  def dump_params
+  end
 end
 
