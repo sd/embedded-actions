@@ -37,7 +37,7 @@ class CachesEmbeddedTest < Test::Unit::TestCase
     get :embedded_actions
     assert_equal "regular value is 2\ncached value is 1", @response.body
     
-    @controller.expire_embedded :controller => "embedded_actions_test", :action => "cached_action"
+    @controller.expire_embedded :controller => "test", :action => "cached_action"
     get :embedded_actions
     assert_equal "regular value is 2\ncached value is 2", @response.body
   end
@@ -46,15 +46,15 @@ class CachesEmbeddedTest < Test::Unit::TestCase
     # This page uses explicit overrides to reverse which embedded actions are cached
     
     TestController.test_value = 1
-    get :embedded_with_overrides
+    get :embedded_overrides
     assert_equal "regular value is 1\ncached value is 1", @response.body
 
     TestController.test_value = 2
-    get :embedded_with_overrides
+    get :embedded_overrides
     assert_equal "regular value is 1\ncached value is 2", @response.body
     
-    @controller.expire_embedded :controller => "embedded_actions_test", :action => "regular_action"
-    get :embedded_with_overrides
+    @controller.expire_embedded :controller => "test", :action => "regular_action"
+    get :embedded_overrides
     assert_equal "regular value is 2\ncached value is 2", @response.body
   end
 

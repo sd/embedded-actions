@@ -49,6 +49,20 @@ module ActionController  #:nodoc:
       end
 
       protected
+        def cleanup_options_for_embedded(options)
+          controller = options.delete(:controller)
+          action = options.delete(:action)
+          id = options.delete(:id)
+          params = options.delete(:params) || {}
+          clean_options = {}
+          clean_options[:controller] = controller if controller
+          clean_options[:action] = action if action
+          clean_options[:id] = id if id
+          clean_options[:params] = options.merge(params) # Merge any remaining key into params
+          clean_options.delete(:params) if clean_options[:params].size == 0
+          clean_options
+        end
+        
         # Renders the embedded action specified as the response for the current method
         def embed_action(options) #:doc:
           embedded_logging(options) do
@@ -84,6 +98,8 @@ module ActionController  #:nodoc:
 
       private
         def embedded_response(options, reuse_response)
+          options = cleanup_options_for_embedded(options)
+
           klass    = embedded_class(options)
           request  = request_for_embedded(klass.controller_name, options)
           response = reuse_response ? @response : @response.dup

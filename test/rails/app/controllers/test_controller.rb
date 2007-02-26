@@ -19,7 +19,7 @@ class TestController < ActionController::Base
   def embedded_actions
   end
 
-  def embedded_with_overrides
+  def embedded_overrides
   end
 
   def forced_refresh
