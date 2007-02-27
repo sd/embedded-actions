@@ -39,6 +39,8 @@ class EmbeddedActionTest < Test::Unit::TestCase
                      "<%= embed_action :action => 'dump_params', :id => 'the id', :color => 'blue' %>"
     assert_embed_erb "Params: action: dump_params, color: red, controller: test, id: the id\n", 
                      "<%= embed_action :action => 'dump_params', :id => 'the id', :color => 'blue', :params => {:color => 'red'} %>"
+    assert_embed_erb "Params: action: dump_params, color: red, controller: test, id: the id\n", 
+                     "<%= embed_action :action => 'dump_params', :id => 'the id', :color => 'blue', :params => {'color' => 'red'} %>"
   end
   
   def assert_embed_erb(result, erb)

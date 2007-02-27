@@ -50,6 +50,7 @@ module ActionController  #:nodoc:
 
       protected
         def cleanup_options_for_embedded(options)
+          options = options.with_indifferent_access
           controller = options.delete(:controller)
           action = options.delete(:action)
           id = options.delete(:id)
