@@ -47,15 +47,15 @@ class CachesEmbeddedTest < Test::Unit::TestCase
     
     TestController.test_value = 1
     get :embedded_overrides
-    assert_equal "regular value is 1\ncached value is 1", @response.body
+    assert_equal "regular value is 1\ncached value is 1", @response.body, 'First call should not have been cached'
 
     TestController.test_value = 2
     get :embedded_overrides
-    assert_equal "regular value is 1\ncached value is 2", @response.body
+    assert_equal "regular value is 1\ncached value is 2", @response.body, "Second call should reflect cached value"
     
     @controller.expire_embedded :controller => "test", :action => "regular_action"
     get :embedded_overrides
-    assert_equal "regular value is 2\ncached value is 2", @response.body
+    assert_equal "regular value is 2\ncached value is 2", @response.body, "Expiration should have forced a refreshed value"
   end
 
   def test_embedded_caching_refresh
@@ -63,17 +63,17 @@ class CachesEmbeddedTest < Test::Unit::TestCase
     
     TestController.test_value = 1
     get :forced_refresh
-    assert_equal "regular value is 1\ncached value is 1", @response.body
+    assert_equal "regular value is 1\ncached value is 1", @response.body, "First call should not have been cached"
 
     TestController.test_value = 2
     get :forced_refresh
-    assert_equal "regular value is 2\ncached value is 1", @response.body
+    assert_equal "regular value is 2\ncached value is 1", @response.body, "Second call should reflect the cached value"
     
     get :forced_refresh, :refresh => true
-    assert_equal "regular value is 2\ncached value is 2", @response.body
+    assert_equal "regular value is 2\ncached value is 2", @response.body, "Call with refresh should reflect the new valu"
 
     TestController.test_value = 3
     get :forced_refresh
-    assert_equal "regular value is 3\ncached value is 2", @response.body
+    assert_equal "regular value is 3\ncached value is 2", @response.body, "Another call without refresh should reflect the cached value"
   end
 end

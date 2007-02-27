@@ -31,40 +31,40 @@ class EmbeddedActionTest < Test::Unit::TestCase
   def test_embed_action
     assert_embed_erb "Params: action: dump_params, controller: test, id: \n", 
                      "<%= embed_action :action => 'dump_params' %>",
-                     "should accept implicit controller"
+                     "embed_action should accept implicit controller"
 
     assert_embed_erb "Params: action: dump_params, controller: test, id: \n", 
                      "<%= embed_action :controller => 'test', :action => 'dump_params' %>",
-                     "should accept explicit controller"
+                     "embed_action should accept explicit controller"
                      
     assert_embed_erb "Params: action: dump_params, controller: test, id: the id\n", 
                      "<%= embed_action :action => 'dump_params', :id => 'the id2' %>",
-                     "should pass the id"
+                     "embed_action should pass the id"
                      
     assert_embed_erb "Params: action: dump_params, color: blue, controller: test, id: the id\n", 
                      "<%= embed_action :action => 'dump_params', :id => 'the id', :params => {:color => 'blue'} %>",
-                     "should pass params as expected"
+                     "embed_action should pass params as expected"
                      
     assert_embed_erb "Params: action: dump_params, color: blue, controller: test, id: the id\n", 
                      "<%= embed_action :action => 'dump_params', :id => 'the id', :color => 'blue' %>",
-                     "should merge into params anything that's not standard"
+                     "embed_action should merge into params anything that's not standard"
                      
     assert_embed_erb "Params: action: dump_params, color: red, controller: test, id: the id\n", 
                      "<%= embed_action :action => 'dump_params', :id => 'the id', :color => 'blue', :params => {:color => 'red'} %>",
-                     "should override with the contents of params"
+                     "embed_action should override with the contents of params"
 
     assert_embed_erb "Params: action: dump_params, color: red, controller: test, id: the id\n", 
                      "<%= embed_action :action => 'dump_params', :id => 'the id', :color => 'blue', :params => {'color' => 'red'} %>",
-                     "should allow indifferent access"
+                     "embed_action should allow indifferent access"
   end
   
-  def assert_embed_erb(result, erb)
+  def assert_embed_erb(result, erb, msg = nil)
     TestController.send(:define_method, :test_action, Proc.new do
       render :inline => erb
     end)
     
     get :test_action
-    assert_equal result, @response.body
+    assert_equal result, @response.body, msg
   end
 
 end
