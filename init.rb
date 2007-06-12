@@ -1,6 +1,6 @@
-require 'detect_rescue_action'
-require 'embed_action'
-require 'caches_embedded'
+require 'embedded_actions/detect_rescue_action'
+require 'embedded_actions/embed_action'
+require 'embedded_actions/caches_embedded'
 
 class ActionController::Base
   include ::ActionController::EmbeddedActions
