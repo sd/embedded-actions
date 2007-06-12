@@ -6,3 +6,7 @@ class ActionController::Base
   include ::ActionController::EmbeddedActions
   include ::ActionController::CachesEmbedded
 end
+
+Mime::Type.register "application/x-embedded_action", :embedded
+Mime::Type.register "application/x-embeded_action",  :embeded
+Mime::Type.register "application/x-embed_action",    :embed

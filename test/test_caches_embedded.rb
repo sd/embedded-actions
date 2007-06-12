@@ -1,15 +1,4 @@
-ENV["RAILS_ENV"] = "test"
-# To test the embedded_actions plugin, we use a minimal rails setup located in the 'test/rails' directory.
-# The following line loads that rails app environment
-require File.expand_path(File.dirname(__FILE__) + "/rails/config/environment")
-require 'application'
-require 'test_controller'
-
-require 'test/unit'  
-require 'action_controller/test_process'
-require 'breakpoint'
-
-require 'test_help'
+require File.expand_path(File.dirname(__FILE__) + "/rails/test/test_helper")
 
 # Add 'lib' to ruby's library path and load the plugin libraries (code copied from Rails railties initializer's load_plugin)
 #lib_path  = File.expand_path(File.dirname(__FILE__) + "/../lib")

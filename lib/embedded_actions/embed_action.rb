@@ -85,8 +85,8 @@ module ActionController  #:nodoc:
         end
 
         def flash_with_embedded(refresh = false) #:nodoc:
-          if @flash.nil? || refresh
-            @flash =
+          if @_flash.nil? || refresh
+            @_flash =
               if @parent_controller
                 @parent_controller.flash
               else
@@ -94,7 +94,7 @@ module ActionController  #:nodoc:
               end
           end
 
-          @flash
+          @_flash
         end
 
       private
@@ -103,7 +103,7 @@ module ActionController  #:nodoc:
 
           klass    = embedded_class(options)
           request  = request_for_embedded(klass.controller_name, options)
-          response = reuse_response ? @response : @response.dup
+          response = reuse_response ? @_response : @_response.dup
 
           klass.process_with_embedded(request, response, self)
         end
@@ -121,14 +121,19 @@ module ActionController  #:nodoc:
         # The new request inherits the session from the current request,
         # bypassing any session options set for the embedded action controller's class
         def request_for_embedded(controller_name, options)
-          request         = @request.dup
-          request.session = @request.session
+          request         = @_request.dup
+          request.session = @_request.session
 
           request.instance_variable_set(
             :@parameters,
             (options[:params] || {}).with_indifferent_access.update(
               "controller" => controller_name, "action" => options[:action], "id" => options[:id]
             )
+          )
+          
+          request.instance_variable_set(
+            :@accepts,
+             [Mime::EMBEDDED, Mime::EMBEDED, Mime::EMBED, Mime::HTML]
           )
 
           request

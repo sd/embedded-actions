@@ -1,5 +1,14 @@
 ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
+
+# To test the embedded_actions plugin, we use a minimal rails setup located in the 'test/rails' directory.
+# The following line loads that rails app environment
+require 'application'
+require 'test_controller'
+
+require 'test/unit'  
+require 'action_controller/test_process'
+
 require 'test_help'
 
 class Test::Unit::TestCase
@@ -25,4 +34,14 @@ class Test::Unit::TestCase
   self.use_instantiated_fixtures  = false
 
   # Add more helper methods to be used by all tests here...
+
+
+  def assert_embed_erb(result, erb, msg = nil)
+    TestController.send(:define_method, :test_action, Proc.new do
+      render :inline => erb
+    end)
+    
+    get :test_action
+    assert_equal result, @response.body, msg
+  end
 end

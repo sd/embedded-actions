@@ -26,6 +26,6 @@ class TestController < ActionController::Base
   end
   
   def dump_params
-  end
+  end  
 end
 
