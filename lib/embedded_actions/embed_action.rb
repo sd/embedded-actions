@@ -103,8 +103,12 @@ module ActionController  #:nodoc:
 
           klass    = embedded_class(options)
           request  = request_for_embedded(klass.controller_name, options)
-          response = reuse_response ? @_response : @_response.dup
-
+          if reuse_response
+            response = @_response
+          else
+            response = @_response.class.new
+          end
+          
           klass.process_with_embedded(request, response, self)
         end
 
