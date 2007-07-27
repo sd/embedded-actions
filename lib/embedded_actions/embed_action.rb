@@ -19,14 +19,9 @@ module ActionController  #:nodoc:
       base.send :attr_accessor, :parent_controller
 
       base.class_eval do
-        alias_method :process_cleanup_without_embedded, :process_cleanup
-        alias_method :process_cleanup, :process_cleanup_with_embedded
-
-        alias_method :set_session_options_without_embedded, :set_session_options
-        alias_method :set_session_options, :set_session_options_with_embedded
-
-        alias_method :flash_without_embedded, :flash
-        alias_method :flash, :flash_with_embedded
+        alias_method_chain :process_cleanup,      :embedded
+        alias_method_chain :set_session_options,  :embedded
+        alias_method_chain :flash,                :embedded
 
         alias_method :embedded_request?, :parent_controller
       end
@@ -85,16 +80,11 @@ module ActionController  #:nodoc:
         end
 
         def flash_with_embedded(refresh = false) #:nodoc:
-          if @_flash.nil? || refresh
-            @_flash =
-              if @parent_controller
-                @parent_controller.flash
-              else
-                flash_without_embedded
-              end
+          if refresh || flash_without_embedded.nil?
+            @_flash = parent_controller.flash if parent_controller
           end
 
-          @_flash
+          flash_without_embedded
         end
 
       private
@@ -104,12 +94,13 @@ module ActionController  #:nodoc:
           klass    = embedded_class(options)
           request  = request_for_embedded(klass.controller_name, options)
           if reuse_response
-            response = @_response
+            new_response = response
           else
-            response = @_response.class.new
+            new_response = response.dup
+            new_response.headers = ActionController::AbstractResponse::DEFAULT_HEADERS
           end
           
-          klass.process_with_embedded(request, response, self)
+          klass.process_with_embedded(request, new_response, self)
         end
 
         # determine the controller class for the embedded action request
@@ -125,8 +116,8 @@ module ActionController  #:nodoc:
         # The new request inherits the session from the current request,
         # bypassing any session options set for the embedded action controller's class
         def request_for_embedded(controller_name, options)
-          request         = @_request.dup
-          request.session = @_request.session
+          request         = self.request.dup
+          request.session = self.request.session
 
           request.instance_variable_set(
             :@parameters,
