@@ -8,7 +8,7 @@ module ActionController::Rescue
   def rescue_action_with_exception_detection(exception)
     rescue_action_without_exception_detection(exception)
     
-    body = @response.body
+    body = response.body
     class <<body
       attr_accessor :exception_rescued
     end
