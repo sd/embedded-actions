@@ -8,8 +8,7 @@ module ActionController
       base.extend(ClassMethods)
 
       base.class_eval do
-        alias_method :embed_action_as_string_without_caching, :embed_action_as_string
-        alias_method :embed_action_as_string, :embed_action_as_string_with_caching 
+        alias_method_chain :embed_action_as_string, :caching
       end
     end
     
