@@ -100,6 +100,9 @@ module ActionController  #:nodoc:
             new_response.headers = ActionController::AbstractResponse::DEFAULT_HEADERS
           end
           
+          # Using a content-encoding header prevents output compression filters from messing with this response
+          new_response.headers['Content-Encoding'] = "identity"
+          
           klass.process_with_embedded(request, new_response, self)
         end
 
