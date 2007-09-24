@@ -15,6 +15,8 @@ module ActionController
   
     module InstanceMethods
       def normalize_embedded_options(options)
+        return {} if options.nil?
+        
         for key in options.keys
           unless [:controller, :action, :id, :params].include? key.to_sym
             options[:params] ||= {}
