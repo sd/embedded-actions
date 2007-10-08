@@ -37,11 +37,11 @@ class Test::Unit::TestCase
 
 
   def assert_embed_erb(result, erb, msg = nil)
-    TestController.send(:define_method, :test_action, Proc.new do
+    (class << @controller; self; end).send(:define_method, :test_action_for_assert_embed_erb, Proc.new do
       render :inline => erb
     end)
     
-    get :test_action
+    get :test_action_for_assert_embed_erb
     assert_equal result, @response.body, msg
   end
 end

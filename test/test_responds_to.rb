@@ -14,26 +14,16 @@ class RespondsToTest < Test::Unit::TestCase
     @controller = TestController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
+    FileUtils.rm_rf "#{RAILS_ROOT}/tmp/cache/test.host"
   end
 
   def test_responds_to_embedded
-    TestController.class_eval do
-      def action_with_respond_to
-        respond_to do |format|
-          format.html     { render :inline => "html content"     }
-          format.embedded { render :inline => "embedded content" }
-          format.all      { render :inline => "catch all" }
-        end
-      end
-    end
-    
-    assert_embed_erb "embedded content", 
-                     "<%= embed_action :action => 'action_with_respond_to' %>",
-                     "should respond with embedded content"
-    assert_equal "text/html", @response.content_type
-
     get :action_with_respond_to
     assert_equal "html content", @response.body, "should respond with html content"
+    assert_equal "text/html", @response.content_type
+
+    get :action_that_calls_action_with_respond_to
+    assert_equal "embedded content", @response.body, "should respond with html content"
     assert_equal "text/html", @response.content_type
   end
 end

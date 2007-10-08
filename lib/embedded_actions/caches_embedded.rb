@@ -23,13 +23,13 @@ module ActionController
     
     module InstanceMethods
       def cache_embedded?(options)
-        cache_this_instance = options.delete :caching # the rest of the request processing code doesn't have to know about this option
-
+        cache_this_instance = options[:params] && options[:params].delete(:caching) # the rest of the request processing code doesn't have to know about this option
         return false unless self.perform_caching
     
         if embedded_class(options).cached_embedded[options[:action].to_sym]
           return true unless cache_this_instance == false
         end
+
         return cache_this_instance
       end
 
@@ -38,7 +38,7 @@ module ActionController
       end
   
       def embed_action_as_string_with_caching(options)
-        force_refresh = options.delete :refresh_cache
+        force_refresh = options[:params] && options[:params].delete(:refresh_cache)
         return embed_action_as_string_without_caching(options) unless self.cache_embedded?(options)
 
         unless not force_refresh and cached = send(:read_fragment, options)

@@ -9,13 +9,7 @@ require File.expand_path(File.dirname(__FILE__) + "/rails/test/test_helper")
 # Re-raise errors caught by the controller.
 class TestController; def rescue_action(e) raise e end; end
 
-class TestController
-  def default_url_options(options)
-    {:id => 15, :category => "red"}
-  end
-end
-
-class TestControllerWithDefaultUrlOptions < TestController
+class TestControllerWithLessDefaultUrlOptions < TestController
   def default_url_options(options)
     {:id => 15}
   end
@@ -38,12 +32,14 @@ end
 
 class DefaultEmbeddedOptionsTest < Test::Unit::TestCase
   def setup
-    @controller = TestController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
+    FileUtils.rm_rf "#{RAILS_ROOT}/tmp/cache/test.host"
   end
 
   def test_normalize_embedded_options
+    @controller = TestControllerWithMoreDefaultUrlOptions.new
+
     assert_equal({:id => 1, :params => {:category => "red"}}, @controller.normalize_embedded_options({:id => 1, :category => "red"}))
     assert_equal({:id => 1, :params => {:category => "red"}}, @controller.normalize_embedded_options({:id => 1, :params => {:category => "red"}}))
     assert_equal({:params => {:category => "blue"}}, @controller.normalize_embedded_options({:category => "blue"}))
@@ -51,7 +47,7 @@ class DefaultEmbeddedOptionsTest < Test::Unit::TestCase
   end
   
   def test_default_url_options
-    @controller = TestControllerWithDefaultUrlOptions.new
+    @controller = TestControllerWithLessDefaultUrlOptions.new
     
     assert_equal({:id => 15}, @controller.rewrite_embedded_options({}))
     assert_equal({:id => 16}, @controller.rewrite_embedded_options({:id => 16}))
@@ -72,23 +68,19 @@ class DefaultEmbeddedOptionsTest < Test::Unit::TestCase
   end
   
   def test_embed_action_with_default_options
-    @controller = TestController.new
+    @controller = TestControllerWithMoreDefaultUrlOptions.new
 
-    assert_embed_erb "Params: action: dump_params, category: red, controller: test, id: 15\n", 
-                     "<%= embed_action :action => 'dump_params' %>",
-                     "embed_action should use default options"
+    get :inline_erb_action, :erb => "<%= embed_action :action => 'dump_params' %>"
+    assert_equal "Params: action: dump_params, category: red, controller: test_controller_with_more_default_url_options, id: 15", @response.body, "embed_action should use default options"
 
-    assert_embed_erb "Params: action: dump_params, category: red, controller: test, id: 16\n", 
-                     "<%= embed_action :action => 'dump_params', :id => 16 %>",
-                     "embed_action should use default options"
+    get :inline_erb_action, :erb => "<%= embed_action :action => 'dump_params', :id => 16 %>"
+    assert_equal "Params: action: dump_params, category: red, controller: test_controller_with_more_default_url_options, id: 16", @response.body, "embed_action should use default options"
 
-    assert_embed_erb "Params: action: dump_params, category: blue, controller: test, id: 16\n", 
-                     "<%= embed_action :action => 'dump_params', :id => 16, :category => 'blue' %>",
-                     "embed_action should use default options"
+    get :inline_erb_action, :erb => "<%= embed_action :action => 'dump_params', :id => 16, :category => 'blue' %>"
+    assert_equal "Params: action: dump_params, category: blue, controller: test_controller_with_more_default_url_options, id: 16", @response.body, "embed_action should use default options"
 
-    assert_embed_erb "Params: action: dump_params, category: blue, controller: test, id: 16\n", 
-                     "<%= embed_action :action => 'dump_params', :id => 16, :params => {:category => 'blue'} %>",
-                     "embed_action should use default options"
+    get :inline_erb_action, :erb => "<%= embed_action :action => 'dump_params', :id => 16, :params => {:category => 'blue'} %>"
+    assert_equal "Params: action: dump_params, category: blue, controller: test_controller_with_more_default_url_options, id: 16", @response.body, "embed_action should use default options"
   end
   
 end

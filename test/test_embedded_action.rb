@@ -18,33 +18,26 @@ class EmbeddedActionTest < Test::Unit::TestCase
   end
 
   def test_embed_action
-    assert_embed_erb "Params: action: dump_params, controller: test, id: \n", 
-                     "<%= embed_action :action => 'dump_params' %>",
-                     "embed_action should accept implicit controller"
+    get :inline_erb_action, :erb => "<%= embed_action :action => 'dump_params' %>"
+    assert_equal "Params: action: dump_params, controller: test, id: ", @response.body, "embed_action should accept implicit controller"
 
-    assert_embed_erb "Params: action: dump_params, controller: test, id: \n", 
-                     "<%= embed_action :controller => 'test', :action => 'dump_params' %>",
-                     "embed_action should accept explicit controller"
+    get :inline_erb_action, :erb => "<%= embed_action :controller => 'test', :action => 'dump_params' %>"
+    assert_equal "Params: action: dump_params, controller: test, id: ", @response.body, "embed_action should accept explicit controller"
                      
-    assert_embed_erb "Params: action: dump_params, controller: test, id: the id\n", 
-                     "<%= embed_action :action => 'dump_params', :id => 'the id' %>",
-                     "embed_action should pass the id"
+    get :inline_erb_action, :erb => "<%= embed_action :action => 'dump_params', :id => 'the id' %>"
+    assert_equal "Params: action: dump_params, controller: test, id: the id", @response.body, "embed_action should pass the id"
                      
-    assert_embed_erb "Params: action: dump_params, color: blue, controller: test, id: the id\n", 
-                     "<%= embed_action :action => 'dump_params', :id => 'the id', :params => {:color => 'blue'} %>",
-                     "embed_action should pass params as expected"
+    get :inline_erb_action, :erb => "<%= embed_action :action => 'dump_params', :id => 'the id', :params => {:color => 'blue'} %>"
+    assert_equal "Params: action: dump_params, color: blue, controller: test, id: the id", @response.body, "embed_action should pass params as expected"
                      
-    assert_embed_erb "Params: action: dump_params, color: blue, controller: test, id: the id\n", 
-                     "<%= embed_action :action => 'dump_params', :id => 'the id', :color => 'blue' %>",
-                     "embed_action should merge into params anything that's not standard"
+    get :inline_erb_action, :erb => "<%= embed_action :action => 'dump_params', :id => 'the id', :color => 'blue' %>"
+    assert_equal "Params: action: dump_params, color: blue, controller: test, id: the id", @response.body, "embed_action should merge into params anything that's not standard"
                      
-    assert_embed_erb "Params: action: dump_params, color: red, controller: test, id: the id\n", 
-                     "<%= embed_action :action => 'dump_params', :id => 'the id', :color => 'blue', :params => {:color => 'red'} %>",
-                     "embed_action should override with the contents of params"
+    get :inline_erb_action, :erb => "<%= embed_action :action => 'dump_params', :id => 'the id', :color => 'blue', :params => {:color => 'red'} %>"
+    assert_equal "Params: action: dump_params, color: red, controller: test, id: the id", @response.body, "embed_action should override with the contents of params"
 
-    assert_embed_erb "Params: action: dump_params, color: red, controller: test, id: the id\n", 
-                     "<%= embed_action :action => 'dump_params', :id => 'the id', :color => 'blue', :params => {'color' => 'red'} %>",
-                     "embed_action should allow indifferent access"
+    get :inline_erb_action, :erb => "<%= embed_action :action => 'dump_params', :id => 'the id', :color => 'blue', :params => {'color' => 'red'} %>"
+    assert_equal "Params: action: dump_params, color: red, controller: test, id: the id", @response.body, "embed_action should allow indifferent access"
   end
 
 end
