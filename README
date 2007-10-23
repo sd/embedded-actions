@@ -21,6 +21,22 @@ for different parameters) just like page caching, but at the level of html
 fragments. So your dynamic pages can still be rendered dynamically, but some of
 the embedded actions can be cached (and expired) independently.
 
+Just declare an action as 'cacheable' in a way similar to page caching, 
+by invoking "caches_embedded" with the name of the action to cache.
+
+class TestController < ApplicationController
+  caches_embedded :user_list
+
+  def user_list
+    ...
+  end
+end
+
+Cached fragments can be invalidated with calls to expires_embedded, but you must
+remember to use the same set of parameters used to embed the cached action in
+the first place.
+
+
 -------------------------------------------------------------------------------
 Copyright (c) 2007 Sebastian Delmont <sd@notso.net> 
 Copyright (c) 2007 StreetEasy / NMD Interactive <http://www.streeteasy.com/> 
