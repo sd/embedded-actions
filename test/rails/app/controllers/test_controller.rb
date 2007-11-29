@@ -2,13 +2,14 @@ class TestController < ActionController::Base
   cattr_accessor :test_value
 
   caches_embedded :cached_action
+
   def cached_action
     @id = params[:id]
     @value = TestController.test_value || "N/A"
     
     render :template => "test/value", :layout => false
   end
-  
+    
   def regular_action
     @id = params[:id]
     @value = TestController.test_value || "N/A"
@@ -44,5 +45,10 @@ class TestController < ActionController::Base
   def inline_erb_action
     render :inline => params[:erb]
   end
+    
+  def call_uncached_controller
+     render :text => embed_action_as_string(:controller => "test_no_caching",:action => "cached_action")
+  end  
+  
 end
 

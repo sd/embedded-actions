@@ -30,6 +30,25 @@ class CachesEmbeddedTest < Test::Unit::TestCase
     get :embedded_actions
     assert_equal "regular value is 2\ncached value is 2", @response.body
   end
+  
+  def test_should_not_return_from_cache_if_params_are_different
+    TestController.test_value = "test"
+    get :cached_action, :id => 2
+    assert_equal "test (id=2)", @response.body
+    
+    get :cached_action, :id => 3
+    assert_equal "test (id=3)", @response.body
+  end
+
+  def test_ensure_caching_only_is_enabled_where_it_should_be
+    TestNoCachingController.test_value = 1
+    get :call_uncached_controller
+    assert_equal "This should never cache. value: 1", @response.body
+    
+    TestNoCachingController.test_value = 2
+    get :call_uncached_controller
+    assert_equal "This should never cache. value: 2", @response.body
+  end
 
   def test_embedded_caching_overrides
     # This page uses explicit overrides to reverse which embedded actions are cached

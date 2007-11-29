@@ -16,17 +16,18 @@ module ActionController
       def caches_embedded(*actions)
         return unless perform_caching
         actions.each do |action|
-          self.cached_embedded[action.to_sym] = true
+          self.cached_embedded["#{controller_name}_#{action}".to_sym] = true
         end
       end
     end
     
     module InstanceMethods
       def cache_embedded?(options)
+       # require 'ruby-debug'; debugger
         cache_this_instance = options[:params] && options[:params].delete(:caching) # the rest of the request processing code doesn't have to know about this option
         return false unless self.perform_caching
     
-        if embedded_class(options).cached_embedded[options[:action].to_sym]
+        if embedded_class(options).cached_embedded["#{options[:controller]}_#{options[:action]}".to_sym]
           return true unless cache_this_instance == false
         end
 
