@@ -50,6 +50,20 @@ class CachesEmbeddedTest < Test::Unit::TestCase
     assert_equal "This should never cache. value: 2", @response.body
   end
 
+  def test_should_cache_properly_with_namespaced_controllers
+    Admin::NamespaceTestController.test_value = 1
+    get :call_namespaced_action
+    assert_equal "Namespace cache test. value: 1", @response.body
+    
+    Admin::NamespaceTestController.test_value = 2
+    get :call_namespaced_action
+    assert_equal "Namespace cache test. value: 1", @response.body
+    
+    @controller.expire_embedded :controller => "admin/namespace_test", :action => "cached_action"
+    get :call_namespaced_action
+    assert_equal "Namespace cache test. value: 2", @response.body
+  end
+
   def test_embedded_caching_overrides
     # This page uses explicit overrides to reverse which embedded actions are cached
     

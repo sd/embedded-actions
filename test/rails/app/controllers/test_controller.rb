@@ -9,7 +9,7 @@ class TestController < ActionController::Base
     
     render :template => "test/value", :layout => false
   end
-    
+  
   def regular_action
     @id = params[:id]
     @value = TestController.test_value || "N/A"
@@ -50,5 +50,8 @@ class TestController < ActionController::Base
      render :text => embed_action_as_string(:controller => "test_no_caching",:action => "cached_action")
   end  
   
+  def call_namespaced_action
+     render :text => embed_action_as_string(:controller => "admin/namespace_test", :action => 'cached_action')
+  end
 end
 

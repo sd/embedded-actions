@@ -36,6 +36,11 @@ Cached fragments can be invalidated with calls to expires_embedded, but you must
 remember to use the same set of parameters used to embed the cached action in
 the first place.
 
+Additionally, the underlying fragment caching mechanism can be passed 
+an options hash in the following manner:
+
+  caches_embedded :user_list, :ttl => 60.minutes
+
 
 -------------------------------------------------------------------------------
 Copyright (c) 2007 Sebastian Delmont <sd@notso.net> 
@@ -69,9 +74,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------------
 
 CONTRIBUTORS
+- Sebastian Delmont <sd@notso.net>
 - Jerret Taylor <jerrett@gmail.com>
-
+- Ryan Barber <rfb@skyscraper.nu>
 
 RELEASE HISTORY
-1.0 - Oct 23 2007 : First widespread release
-1.0.1 - Oct 30 2007 : Fixed bug that was causing a "Content-encoding: identity" to leak to all requests
+1.0 - Oct 23 2007
+  First widespread release.
+
+1.0.1 - Oct 30 2007 
+  Fixed bug that was causing a "Content-encoding: identity" to leak 
+  to all requests.
+
+1.0.2 - Nov 29 2007
+  Fixed bug (thanks Jerret) that caused caching settings to leak 
+  to actions with the same name in other controllers.
+
+1.1 - Dec 4 2007
+  Passthrough options for fragment caching (Ryan).
+  Support for namespaced controllers in caching (Jerret). 
+  Minor bug fixes.
