@@ -23,7 +23,6 @@ module ActionController
     
     module InstanceMethods
       def cache_embedded?(options)
-       # require 'ruby-debug'; debugger
         cache_this_instance = options[:params] && options[:params].delete(:caching) # the rest of the request processing code doesn't have to know about this option
         return false unless self.perform_caching
     
