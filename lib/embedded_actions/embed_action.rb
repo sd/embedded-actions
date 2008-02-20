@@ -46,8 +46,8 @@ module ActionController  #:nodoc:
       protected
         def cleanup_options_for_embedded(options)
           options = options.with_indifferent_access
-          controller = options.delete(:controller)
-          action = options.delete(:action)
+          controller = options.delete(:controller).to_s
+          action = options.delete(:action).to_s
           id = options.delete(:id)
           params = options.delete(:params) || {}
           clean_options = {}
