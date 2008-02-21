@@ -46,13 +46,13 @@ module ActionController  #:nodoc:
       protected
         def cleanup_options_for_embedded(options)
           options = options.with_indifferent_access
-          controller = options.delete(:controller).to_s
-          action = options.delete(:action).to_s
+          controller = options.delete(:controller)
+          action = options.delete(:action)
           id = options.delete(:id)
           params = options.delete(:params) || {}
           clean_options = {}
-          clean_options[:controller] = controller if controller
-          clean_options[:action] = action if action
+          clean_options[:controller] = controller.to_s if controller
+          clean_options[:action] = action.to_s if action
           clean_options[:id] = id if id
           clean_options[:params] = options.merge(params) # Merge any remaining key into params
           clean_options.delete(:params) if clean_options[:params].size == 0
