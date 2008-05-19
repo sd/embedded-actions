@@ -18,12 +18,15 @@ class TestController < ActionController::Base
   end
   
   def embedded_actions
+    render :template => "test/embedded_actions"
   end
 
   def embedded_overrides
+    render :template => "test/embedded_overrides"
   end
 
   def forced_refresh
+    render :template => "test/forced_refresh"
   end
   
   def dump_params

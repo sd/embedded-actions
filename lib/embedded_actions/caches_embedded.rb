@@ -33,8 +33,13 @@ module ActionController
         cache_this_instance = options[:params] && options[:params].delete(:caching) # the rest of the request processing code doesn't have to know about this option
         return false unless self.perform_caching
     
-        if embedded_class(options).cached_embedded["#{embedded_class(options).controller_path}/#{options[:action]}".to_sym]
-          return true unless cache_this_instance == false
+        controller_class = embedded_class(options)
+        while controller_class
+          if controller_class.cached_embedded["#{controller_class.controller_path}/#{options[:action]}".to_sym]
+            return true unless cache_this_instance == false
+          end
+          controller_class = controller_class.superclass
+          controller_class = nil unless controller_class.respond_to? :controller_path
         end
 
         return cache_this_instance

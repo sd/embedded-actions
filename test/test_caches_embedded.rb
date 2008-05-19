@@ -98,4 +98,24 @@ class CachesEmbeddedTest < Test::Unit::TestCase
     get :forced_refresh
     assert_equal "regular value is 3\ncached value is 2", @response.body, "Another call without refresh should reflect the cached value"
   end
+
+  def test_caches_embedded_across_inheritance_tree
+    @controller = InheritingController.new
+
+    InheritingController.test_value = "foo"
+    get :inline_erb_action, :erb => "<%= embed_action :action => 'cached_action' %>"
+    assert_equal "foo", @response.body
+
+    InheritingController.test_value = "bar"
+    get :inline_erb_action, :erb => "<%= embed_action :action => 'cached_action' %>"
+    assert_equal "foo", @response.body
+
+    InheritingController.test_value = "bar"
+    @controller.expire_embedded :controller => "inheriting", :action => "cached_action"
+    get :inline_erb_action, :erb => "<%= embed_action :action => 'cached_action' %>"
+    assert_equal "bar", @response.body
+  end
+
+  
 end
+
