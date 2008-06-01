@@ -14,7 +14,7 @@ class CachesEmbeddedTest < Test::Unit::TestCase
     @controller = TestController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
-    FileUtils.rm_rf "#{RAILS_ROOT}/tmp/cache/test.host"
+    FileUtils.rm_rf "#{RAILS_ROOT}/tmp/cache/views/test.host"
   end
 
   def test_embedded_caching

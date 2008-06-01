@@ -6,7 +6,8 @@ Rails::Initializer.run do |config|
   config.frameworks -= [ :action_web_service, :action_mailer ]
 
   config.plugin_paths = ["#{RAILS_ROOT}/../../.."] # this should match the top level directory containing the 'embedded_actions' plugin
+  config.plugins = [:embedded_actions]
 
-  config.action_controller.fragment_cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
+  config.action_controller.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
   config.action_controller.perform_caching             = true
 end

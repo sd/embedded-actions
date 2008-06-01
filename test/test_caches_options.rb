@@ -15,7 +15,7 @@ class TestController;
 end
 
 # We're hijacking write to verify that the options has is being passed
-class MyOwnStore < ActionController::Caching::Fragments::MemoryStore
+class MyOwnStore < ActiveSupport::Cache::MemoryStore
   def write(name, value, options=nil)
     TestController.test_value = options.is_a?(Hash) ? options[:test_value] : nil
     super
@@ -28,7 +28,7 @@ class CachesOptionsTest < Test::Unit::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
 
-    TestController.fragment_cache_store = MyOwnStore.new
+    TestController.cache_store = MyOwnStore.new
   end
 
   def test_embedded_caching
