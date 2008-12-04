@@ -41,8 +41,19 @@ class TestController < ActionController::Base
     end
   end
 
+  def action_with_simple_respond_to
+    respond_to do |format|
+      format.html     { render :inline => "html content"     }
+      format.all      { render :inline => "catch all" }
+    end
+  end
+
   def action_that_calls_action_with_respond_to
     render :inline => "<%= embed_action :action => 'action_with_respond_to' %>"
+  end
+
+  def action_that_calls_action_with_simple_respond_to
+    render :inline => "<%= embed_action :action => 'action_with_simple_respond_to' %>"
   end
 
   def inline_erb_action

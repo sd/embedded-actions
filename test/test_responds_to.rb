@@ -23,7 +23,17 @@ class RespondsToTest < Test::Unit::TestCase
     assert_equal "text/html", @response.content_type
 
     get :action_that_calls_action_with_respond_to
-    assert_equal "embedded content", @response.body, "should respond with html content"
+    assert_equal "embedded content", @response.body, "should respond with embedded content"
+    assert_equal "text/html", @response.content_type
+  end
+
+  def test_responds_to_embedded_without_embedded
+    get :action_with_simple_respond_to
+    assert_equal "html content", @response.body, "should respond with html content"
+    assert_equal "text/html", @response.content_type
+
+    get :action_that_calls_action_with_simple_respond_to
+    assert_equal "html content", @response.body, "should respond with html content"
     assert_equal "text/html", @response.content_type
   end
 end
