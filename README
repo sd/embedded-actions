@@ -1,50 +1,65 @@
 The "embedded actions" plugin 
 =============================
 
-Just like the traditional render :partial, embedded actions allow you to
-refactor your views and extract presentation logic and templates into separate
-files.
+BASIC USAGE
+  Just like the traditional render :partial, embedded actions allow you to
+  refactor your views and extract presentation logic and templates into separate
+  files.
 
-Unlike partials, embedded actions also let you define business logic to be
-performed before the partial is included. That logic is encapsulated in the
-already well understood metaphor of an action inside a controller.
+  Unlike partials, embedded actions also let you define business logic to be
+  performed before the partial is included. That logic is encapsulated in the
+  already well understood metaphor of an action inside a controller.
 
-So a simple call like
+  So a simple call like
 
-<%= embed_action :controller => "songs", :action => "top10" %>
+  <%= embed_action :controller => "songs", :action => "top10" %>
 
-lets you include an html fragment containing the top 10 songs into any of your
-pages, regardless of which controller, action or view wants to do the including.
+  lets you include an html fragment containing the top 10 songs into any of your
+  pages, regardless of which controller, action or view wants to do the including.
 
-Additionally, embedded actions can provide caching of their results (allowing
-for different parameters) just like page caching, but at the level of html
-fragments. So your dynamic pages can still be rendered dynamically, but some of
-the embedded actions can be cached (and expired) independently.
+CACHING
+  Embedded actions can provide caching of their results (allowing for different 
+  parameters) just like page caching, but at the level of html fragments. 
+  So your dynamic pages can still be rendered dynamically, but some of the embedded
+  actions can be cached (and expired) independently.
 
-Just declare an action as 'cacheable' in a way similar to page caching, 
-by invoking "caches_embedded" with the name of the action to cache.
+  Just declare an action as 'cacheable' in a way similar to page caching, 
+  by invoking "caches_embedded" with the name of the action to cache.
 
-class TestController < ApplicationController
-  caches_embedded :user_list
+  class TestController < ApplicationController
+    caches_embedded :user_list
 
-  def user_list
-    ...
+    def user_list
+      ...
+    end
   end
-end
 
-Cached fragments can be invalidated with calls to expires_embedded, but you must
-remember to use the same set of parameters used to embed the cached action in
-the first place.
+  Cached fragments can be invalidated with calls to expires_embedded, but you must
+  remember to use the same set of parameters used to embed the cached action in
+  the first place.
 
-Additionally, the underlying fragment caching mechanism can be passed 
-an options hash in the following manner:
+  Additionally, the underlying fragment caching mechanism can be passed 
+  an options hash in the following manner:
 
-  caches_embedded :user_list, :ttl => 60.minutes
+    caches_embedded :user_list, :ttl => 60.minutes
 
+
+RESPONDS_TO
+  Actions can use Rails' responds_to to provide different behaviours when invoked 
+  normally or embedded in another view.
+  
+  class TestController < ApplicationController
+    def user_list
+      responds_to do |format|
+        format.html     {render :layout => :application}
+        format.embedded {render :layout => false}
+      end
+    end
+  end
 
 -------------------------------------------------------------------------------
-Copyright (c) 2007 Sebastian Delmont <sd@notso.net> 
-Copyright (c) 2007 StreetEasy / NMD Interactive <http://www.streeteasy.com/> 
+Copyright (c) 2007, 2008 Sebastian Delmont <sd@notso.net> 
+Copyright (c) 2007, 2008 StreetEasy / NMD Interactive <http://www.streeteasy.com/> 
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -78,6 +93,7 @@ CONTRIBUTORS
 - Jerret Taylor <jerrett@gmail.com>
 - Ryan Barber <rfb@skyscraper.nu>
 - Andreas Simon <asimon@med4you.de>
+- Jonathan Boler <galatians@gmail.com>
 
 RELEASE HISTORY
 1.0 - Oct 23 2007
@@ -99,3 +115,8 @@ RELEASE HISTORY
 1.1.1 - Feb 20 2008
   Allow symbol names for controllers and actions (Andreas)
   Fixed deprecated 'require_gem' in test environment (Andreas)
+
+1.1.2 - Dec 5 2008
+  Simplified responds_to behaviour
+  Rails 2.2 compatibility (Jonathan)
+  
