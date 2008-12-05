@@ -57,6 +57,13 @@ RESPONDS_TO
     end
   end
 
+SOURCE CODE
+  The official repository for embedded_actions is in GitHub:
+  
+  http://github.com/sd/embedded-actions/tree/master
+
+
+
 -------------------------------------------------------------------------------
 Copyright (c) 2007, 2008 Sebastian Delmont <sd@notso.net> 
 Copyright (c) 2007, 2008 StreetEasy / NMD Interactive <http://www.streeteasy.com/> 
