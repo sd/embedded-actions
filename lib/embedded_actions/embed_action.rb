@@ -129,10 +129,9 @@ module ActionController  #:nodoc:
             )
           )
           
-          request.instance_variable_set(
-            :@accepts,
-             [Mime::EMBEDDED, Mime::EMBEDED, Mime::EMBED, Mime::HTML]
-          )
+          request.instance_variable_set(:@accepts, [Mime::EMBEDDED])
+          request.instance_variable_set(:@_memoized_accepts, [Mime::EMBEDDED])
+          request.instance_variable_set(:@format, Mime::EMBEDDED)
 
           request
         end
