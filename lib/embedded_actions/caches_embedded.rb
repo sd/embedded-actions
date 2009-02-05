@@ -50,16 +50,38 @@ module ActionController
       end
   
       def embed_action_as_string_with_caching(options)
+        options = options.dup
         force_refresh = options[:params] && options[:params].delete(:refresh_cache)
         return embed_action_as_string_without_caching(options) unless self.cache_embedded?(options)
 
-        unless not force_refresh and cached = send(:read_fragment, options)
+        options_for_cache_name = options.dup
+        options_for_cache_engine = self.cached_embedded_options["#{embedded_class(options).controller_path}/#{options[:action]}".to_sym] or nil
+        if options_for_cache_engine and options_for_cache_engine[:options_for_name]
+          case options_for_cache_engine[:options_for_name]
+          when Hash
+            extra_options_for_name = options_for_cache_engine[:options_for_name]
+          when Proc
+            case options_for_cache_engine[:options_for_name].arity
+            when 1
+              extra_options_for_name = options_for_cache_engine[:options_for_name].call(self)
+            else
+              extra_options_for_name = options_for_cache_engine[:options_for_name].call(self, options)
+            end
+          end
+          options_for_cache_engine = options_for_cache_engine.dup
+          options_for_cache_engine.delete(:options_for_name)
+        else
+          extra_options_for_name = nil
+        end
+
+        options_for_cache_name = options_for_cache_name.merge(extra_options_for_name) if extra_options_for_name
+        
+        unless not force_refresh and cached = send(:read_fragment, options_for_cache_name)
           cached = embed_action_as_string_without_caching(options)
           if (cached.exception_rescued rescue false)  # rescue NoMethodError
             RAILS_DEFAULT_LOGGER.debug "Embedded action was not cached because it resulted in an error"
           else
-            cache_options = self.cached_embedded_options["#{embedded_class(options).controller_path}/#{options[:action]}".to_sym] or nil
-            send(:write_fragment, options, cached, cache_options)
+            send(:write_fragment, options_for_cache_name, cached, options_for_cache_engine)
           end
         end
 

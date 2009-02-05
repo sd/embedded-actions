@@ -43,7 +43,22 @@ CACHING
 
     caches_embedded :user_list, :ttl => 60.minutes
 
+	And you can specify additional arguments to be used when generating the cache name.
+	Which is better explained with an example:
+	
+	  caches_embedded :user_list, :options_for_name => Proc.new do |controller| 
+			{:is_admin => controller.current_user.is_admin?}
+		end
 
+	this way, there will be two separate cached versions, one for admin users and one 
+	for regular users. The hash returned is merged with the actual hash passed on
+	the embed_action call, and is used to create an "url-like" name for the cached
+	fragment. So in this case, a call like <%= embed_action :action => "test" %> will
+	produce two different fragments: "/mycontroller/test?is_admin=false" and "...?is_admin=true"
+	depending on the result of controller.current_user.is_admin? when embed_action 
+	is called.
+	
+	
 RESPONDS_TO
   Actions can use Rails' responds_to to provide different behaviours when invoked 
   normally or embedded in another view.

@@ -1,5 +1,6 @@
 class TestController < ActionController::Base
   cattr_accessor :test_value
+  cattr_accessor :another_value
 
   caches_embedded :cached_action
 
@@ -17,12 +18,24 @@ class TestController < ActionController::Base
     render :template => "test/value", :layout => false
   end
   
+  caches_embedded :cached_variable_action, :options_for_name => Proc.new { {:value => TestController.another_value}}
+  def cached_variable_action
+    @id = params[:id]
+    @value = TestController.test_value || "N/A"
+    
+    render :template => "test/value", :layout => false
+  end
+  
   def embedded_actions
     render :template => "test/embedded_actions"
   end
 
   def embedded_overrides
     render :template => "test/embedded_overrides"
+  end
+
+  def embedded_variable_actions
+    render :template => "test/embedded_variable_actions"
   end
 
   def forced_refresh

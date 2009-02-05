@@ -116,6 +116,20 @@ class CachesEmbeddedTest < Test::Unit::TestCase
     assert_equal "bar", @response.body
   end
 
-  
+  def test_caches_embedded_with_custom_options_for_cache_name
+    TestController.another_value = 1
+
+    TestController.test_value = 1
+    get :embedded_variable_actions
+    assert_equal "regular value is 1\ncached value is 1", @response.body, 'First call should not have been cached'
+
+    TestController.test_value = 2
+    get :embedded_variable_actions
+    assert_equal "regular value is 2\ncached value is 1", @response.body, "Second call should reflect cached value"
+
+    TestController.another_value = 2
+    get :embedded_variable_actions
+    assert_equal "regular value is 2\ncached value is 2", @response.body, "Third call should reflect updated value since variable in cache name changed"
+  end
 end
 

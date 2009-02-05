@@ -36,3 +36,4 @@ class CachesOptionsTest < Test::Unit::TestCase
     assert_equal 300, TestController.test_value 
   end
 end
+
