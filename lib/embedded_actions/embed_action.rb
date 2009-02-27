@@ -20,7 +20,7 @@ module ActionController  #:nodoc:
 
       base.class_eval do
         alias_method_chain :process_cleanup,      :embedded
-        alias_method_chain :set_session_options,  :embedded
+        alias_method_chain :set_session_options,  :embedded if base.methods.singleton_methods.include? "set_session_options"
         alias_method_chain :flash,                :embedded
 
         alias_method :embedded_request?, :parent_controller
