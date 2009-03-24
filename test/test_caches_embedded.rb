@@ -9,7 +9,7 @@ require File.expand_path(File.dirname(__FILE__) + "/rails/test/test_helper")
 # Re-raise errors caught by the controller.
 class TestController; def rescue_action(e) raise e end; end
 
-class CachesEmbeddedTest < Test::Unit::TestCase
+class CachesEmbeddedTest < ActionController::TestCase
   def setup
     @controller = TestController.new
     @request    = ActionController::TestRequest.new

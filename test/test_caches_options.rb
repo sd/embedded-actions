@@ -22,7 +22,7 @@ class MyOwnStore < ActiveSupport::Cache::MemoryStore
   end
 end
 
-class CachesOptionsTest < Test::Unit::TestCase
+class CachesOptionsTest < ActionController::TestCase
   def setup
     @controller = TestController.new
     @request    = ActionController::TestRequest.new

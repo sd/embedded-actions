@@ -10,4 +10,6 @@ Rails::Initializer.run do |config|
 
   config.action_controller.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
   config.action_controller.perform_caching             = true
+
+  config.action_controller.session = { :key => "_myapp_session", :secret => "x" * 30 }
 end

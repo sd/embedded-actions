@@ -9,7 +9,7 @@ require File.expand_path(File.dirname(__FILE__) + "/rails/test/test_helper")
 # Re-raise errors caught by the controller.
 class TestController; def rescue_action(e) raise e end; end
 
-class RespondsToTest < Test::Unit::TestCase
+class RespondsToTest < ActionController::TestCase
   def setup
     @controller = TestController.new
     @request    = ActionController::TestRequest.new
@@ -18,11 +18,11 @@ class RespondsToTest < Test::Unit::TestCase
   end
 
   def test_responds_to_embedded
-    # get :action_with_respond_to
-    # assert_equal "html content", @response.body, "should respond with html content"
-    # assert_equal "text/html", @response.content_type
+    get :action_with_respond_to
+    assert_equal "html content", @response.body, "should respond with html content"
+    assert_equal "text/html", @response.content_type
 
-    get :action_that_calls_action_with_respond_to
+    get :action_that_calls_action_with_respond_to, :format => "text/html"
     assert_equal "embedded content", @response.body, "should respond with embedded content"
     assert_equal "text/html", @response.content_type
   end

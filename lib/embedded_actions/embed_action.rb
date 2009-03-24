@@ -19,6 +19,7 @@ module ActionController  #:nodoc:
       base.send :attr_accessor, :parent_controller
 
       base.class_eval do
+        alias_method_chain :send_response,        :embedded
         alias_method_chain :process_cleanup,      :embedded
         alias_method_chain :set_session_options,  :embedded if base.methods.singleton_methods.include? "set_session_options"
         alias_method_chain :flash,                :embedded
@@ -43,6 +44,15 @@ module ActionController  #:nodoc:
         process_without_embedded(request, response, method, *arguments)
       end
 
+      def send_response_with_embedded
+        if embedded_request?
+          response.content_type = nil
+        else
+          response.prepare! 
+        end
+        response
+      end
+
       protected
         def cleanup_options_for_embedded(options)
           options = options.with_indifferent_access
@@ -62,19 +72,20 @@ module ActionController  #:nodoc:
         # Renders the embedded action specified as the response for the current method
         def embed_action(options) #:doc:
           embedded_logging(options) do
-            render_text(embedded_response(options, true).body, response.headers["Status"])
+            response = embedded_response(options, true)
+            render_for_text(response.body, response.headers["Status"])
           end
         end
 
         # Returns the embedded action response as a string
         def embed_action_as_string(options) #:doc:
           embedded_logging(options) do
-            response = embedded_response(options, false)
+            response_for_embeded_action = embedded_response(options, false)
 
-            if redirected = response.redirected_to
+            if redirected = response_for_embeded_action.redirected_to
               embed_action_as_string(redirected)
             else
-              response.body
+              response_for_embeded_action.body
             end
           end
         end
@@ -96,9 +107,14 @@ module ActionController  #:nodoc:
           if reuse_response
             new_response = response
           else
-            new_response = response.dup
-            new_response.headers = ActionController::AbstractResponse::DEFAULT_HEADERS.dup
-
+            if ActionController.const_defined? "Response"
+              new_response = ActionController::Response.new
+            else
+              new_response = response.dup
+              new_response.headers.clear
+            end
+            ActionController::Response::DEFAULT_HEADERS.each {|k, v| new_response.headers[k] = v}
+            
             # Using a content-encoding header prevents output compression filters from messing with this response
             new_response.headers['Content-Encoding'] = "identity"
           end

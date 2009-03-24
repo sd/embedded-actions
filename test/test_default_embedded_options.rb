@@ -30,7 +30,7 @@ class TestControllerWithDefaultEmbeddedOptions < TestController
   end
 end
 
-class DefaultEmbeddedOptionsTest < Test::Unit::TestCase
+class DefaultEmbeddedOptionsTest < ActionController::TestCase
   def setup
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
