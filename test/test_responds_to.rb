@@ -26,4 +26,9 @@ class RespondsToTest < ActionController::TestCase
     assert_equal "embedded content", @response.body, "should respond with embedded content"
     assert_equal "text/html", @response.content_type
   end
+  
+  def test_mime_type_extensions
+    get :mime_test_1
+    assert_equal "MIME TEST 1 HTML\nMIME TEST 2 EMBEDDED\nMIME TEST 3 EMBEDDED", @response.body, "should have rendered 'mime_test_1.html'"
+  end
 end

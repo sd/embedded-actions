@@ -69,5 +69,29 @@ class TestController < ActionController::Base
   def call_namespaced_action
      render :text => embed_action_as_string(:controller => "admin/namespace_test", :action => 'cached_action')
   end
+  
+  def mime_test_1
+    respond_to do |format|
+      format.html     { render }
+      format.embedded { render }
+      format.all      { render :inline => "format not found" }
+    end
+  end
+
+  def mime_test_2
+    respond_to do |format|
+      format.html     { render }
+      format.embedded { render }
+      format.all      { render :inline => "format not found" }
+    end
+  end
+
+  def mime_test_3
+    respond_to do |format|
+      format.html     { render }
+      format.embedded { render }
+      format.all      { render :inline => "format not found" }
+    end
+  end
 end
 
