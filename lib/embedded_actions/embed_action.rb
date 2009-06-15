@@ -109,11 +109,12 @@ module ActionController  #:nodoc:
           else
             if ActionController.const_defined? "Response"
               new_response = ActionController::Response.new
+              ActionController::Response::DEFAULT_HEADERS.each {|k, v| new_response.headers[k] = v}
             else
               new_response = response.dup
               new_response.headers.clear
+              response.class::DEFAULT_HEADERS.each { |k, v| new_response.headers[k] = v }
             end
-            ActionController::Response::DEFAULT_HEADERS.each {|k, v| new_response.headers[k] = v}
             
             # Using a content-encoding header prevents output compression filters from messing with this response
             new_response.headers['Content-Encoding'] = "identity"
