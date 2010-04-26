@@ -145,6 +145,7 @@ module ActionController  #:nodoc:
             )
           )
           
+          request.instance_variable_set(:@requesting_controller, self)
           request.instance_variable_set(:@accepts, [Mime::EMBEDDED])
           request.instance_variable_set(:@_memoized_accepts, [Mime::EMBEDDED])
           request.instance_variable_set(:@format, Mime::EMBEDDED)
