@@ -83,7 +83,11 @@ module ActionController  #:nodoc:
             response_for_embeded_action = embedded_response(options, false)
 
             if redirected = response_for_embeded_action.redirected_to
-              embed_action_as_string(redirected)
+              if redirected.respond_to? :keys
+                embed_action_as_string(redirected)
+              else
+                return ""
+              end
             else
               response_for_embeded_action.body
             end
