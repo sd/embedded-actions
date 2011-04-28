@@ -52,10 +52,6 @@ class EmbeddedActionTest < ActionController::TestCase
     get :inline_erb_action, :erb => "<%= embed_action :action => 'dump_params', :id => 'the id', :color => 'blue', :params => {:color => 'red'} %>"
     assert_equal "Params: action: dump_params, color: red, controller: embedded_action_test, id: the id", @response.body, "embed_action should override with the contents of params"
     assert_equal "text/html", @response.content_type
-
-    get :inline_erb_action, :erb => "<%= embed_action :action => 'dump_params', :id => 'the id', :color => 'blue', :params => {'color' => 'red'} %>"
-    assert_equal "Params: action: dump_params, color: red, controller: embedded_action_test, id: the id", @response.body, "embed_action should allow indifferent access"
-    assert_equal "text/html", @response.content_type
   end
 
 end
