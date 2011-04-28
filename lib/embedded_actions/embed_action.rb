@@ -142,8 +142,6 @@ module ActionController  #:nodoc:
           request         = self.request.dup
           request.session = self.request.session
 
-          options = options.with_indifferent_access
-          
           request.instance_variable_set(
             :@parameters,
             (options[:params] || {}).with_indifferent_access.update(
