@@ -1,11 +1,6 @@
 module ActionController
   module CachesEmbedded
     def self.included(base) # :nodoc:
-      base.send :cattr_accessor, :cached_embedded
-      base.send :cattr_accessor, :cached_embedded_options
-      base.cached_embedded = {}
-      base.cached_embedded_options = {}
-
       base.send :include, InstanceMethods
       base.extend(ClassMethods)
 
@@ -15,6 +10,14 @@ module ActionController
     end
     
     module ClassMethods
+      def cached_embedded
+        @cached_embedded ||= {}
+      end
+      
+      def cached_embedded_options
+        @cached_embedded_options ||= {}
+      end
+      
       def caches_embedded(*actions)
         return unless perform_caching
         
@@ -29,6 +32,14 @@ module ActionController
     end
     
     module InstanceMethods
+      def cached_embedded
+        self.class.cached_embedded
+      end
+      
+      def cached_embedded_options
+        self.class.cached_embedded_options
+      end
+      
       def cache_embedded?(options)
         cache_this_instance = options[:params] && options[:params].delete(:caching) # the rest of the request processing code doesn't have to know about this option
         return false unless self.perform_caching
