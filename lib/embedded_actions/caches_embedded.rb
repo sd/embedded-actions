@@ -84,15 +84,34 @@ module ActionController
         else
           extra_options_for_name = nil
         end
+        
+        if options_for_cache_engine and options_for_cache_engine[:compress]
+          compress_cached = options_for_cache_engine[:compress]
+        else
+          compress_cached = false
+        end
 
         options_for_cache_name = options_for_cache_name.merge(extra_options_for_name) if extra_options_for_name
+
+        if force_refresh
+          cached = nil
+        else
+          cached = send(:read_fragment, options_for_cache_name)
+          if cached and compress_cached
+            cached = Zlib::Inflate.inflate(cached)
+          end
+        end
         
-        unless not force_refresh and cached = send(:read_fragment, options_for_cache_name)
+        unless cached
           cached = embed_action_as_string_without_caching(options)
           if (cached.exception_rescued rescue false)  # rescue NoMethodError
             RAILS_DEFAULT_LOGGER.debug "Embedded action was not cached because it resulted in an error"
           else
-            send(:write_fragment, options_for_cache_name, cached, options_for_cache_engine)
+            if compress_cached
+              send(:write_fragment, options_for_cache_name, Zlib::Deflate.deflate(cached), options_for_cache_engine)
+            else
+              send(:write_fragment, options_for_cache_name, cached, options_for_cache_engine)
+            end
           end
         end
 

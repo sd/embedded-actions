@@ -40,10 +40,14 @@ class CachesOptionsTest < ActionController::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
 
+    @original_cache_store = CacheOptionsTestController.cache_store
     CacheOptionsTestController.cache_store = CacheOptionsTestStore.new
     CacheOptionsTestController.cache_store_test_value = 0
   end
-
+  def teardown
+    CacheOptionsTestController.cache_store = @original_cache_store
+  end
+  
   def test_embedded_caching
     CacheOptionsTestController.cache_store_test_value = 0
 
