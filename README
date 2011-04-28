@@ -58,6 +58,10 @@ CACHING
   depending on the result of controller.current_user.is_admin? when embed_action 
   is called.
   
+  Finally, cached fragments can be compressed before being stored:
+  
+    caches_embedded :user_list, :compress => true
+    
   
 RESPONDS_TO
   Actions can use Rails' responds_to to provide different behaviours when invoked 
@@ -145,3 +149,7 @@ RELEASE HISTORY
 1.1.3 - Mar 24 2009
   Fixed issues with content-type leakage
   Rails 2.3 compatibility
+
+1.2 - Apr 28 2011
+  Compression support
+  
