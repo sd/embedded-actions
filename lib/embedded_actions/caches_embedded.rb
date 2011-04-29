@@ -60,13 +60,12 @@ module ActionController
         expire_fragment(options)
       end
   
-      def embed_action_as_string_with_caching(options)
-        options = options.dup
-        force_refresh = options[:params] && options[:params].delete(:refresh_cache)
-        return embed_action_as_string_without_caching(options) unless self.cache_embedded?(options)
+      def embedded_cache_name_for_options(options)
+        cache_name_for_options = options.dup
 
-        options_for_cache_name = options.dup
-        options_for_cache_engine = self.cached_embedded_options["#{embedded_class(options).controller_path}/#{options[:action]}".to_sym] or nil
+        options_for_cache_engine = self.cached_embedded_options["#{embedded_class(options).controller_path}/#{options[:action]}".to_sym]
+        options_for_cache_engine ||= self.cached_embedded_options["#{embedded_class(options).superclass.controller_path}/#{options[:action]}".to_sym] if embedded_class(options).superclass.respond_to? :controller_path
+
         if options_for_cache_engine and options_for_cache_engine[:options_for_name]
           case options_for_cache_engine[:options_for_name]
           when Hash
@@ -84,19 +83,32 @@ module ActionController
         else
           extra_options_for_name = nil
         end
+
+        cache_name_for_options = cache_name_for_options.merge(extra_options_for_name) if extra_options_for_name
         
+        cache_name_for_options
+      end
+    
+      def embed_action_as_string_with_caching(options)
+        options = options.dup
+        force_refresh = options[:params] && options[:params].delete(:refresh_cache)
+        return embed_action_as_string_without_caching(options) unless self.cache_embedded?(options)
+
+        options_for_cache_engine = self.cached_embedded_options["#{embedded_class(options).controller_path}/#{options[:action]}".to_sym]
+        options_for_cache_engine ||= self.cached_embedded_options["#{embedded_class(options).superclass.controller_path}/#{options[:action]}".to_sym] if embedded_class(options).superclass.respond_to? :controller_path
+
+        cache_name = embedded_cache_name_for_options(options)
+
         if options_for_cache_engine and options_for_cache_engine[:compress]
           compress_cached = options_for_cache_engine[:compress]
         else
           compress_cached = false
         end
 
-        options_for_cache_name = options_for_cache_name.merge(extra_options_for_name) if extra_options_for_name
-
         if force_refresh
           cached = nil
         else
-          cached = send(:read_fragment, options_for_cache_name)
+          cached = send(:read_fragment, cache_name)
           if cached and compress_cached
             cached = Zlib::Inflate.inflate(cached)
           end
@@ -108,9 +120,9 @@ module ActionController
             RAILS_DEFAULT_LOGGER.debug "Embedded action was not cached because it resulted in an error"
           else
             if compress_cached
-              send(:write_fragment, options_for_cache_name, Zlib::Deflate.deflate(cached), options_for_cache_engine)
+              send(:write_fragment, cache_name, Zlib::Deflate.deflate(cached), options_for_cache_engine)
             else
-              send(:write_fragment, options_for_cache_name, cached, options_for_cache_engine)
+              send(:write_fragment, cache_name, cached, options_for_cache_engine)
             end
           end
         end
