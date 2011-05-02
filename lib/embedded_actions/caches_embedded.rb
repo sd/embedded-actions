@@ -110,7 +110,7 @@ module ActionController
         else
           cached = send(:read_fragment, cache_name)
           if cached and compress_cached
-            cached = Zlib::Inflate.inflate(cached)
+            cached = Zlib::Inflate.inflate(cached) rescue nil
           end
         end
         
