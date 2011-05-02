@@ -83,7 +83,7 @@ class CachesEmbeddedTestController < ActionController::Base
     render :inline => params[:erb]
   end
 
-  # def rescue_action(e) raise e end
+  def rescue_action(e) raise e end
 end
 
 class InheritingController < CachesEmbeddedTestController
@@ -124,7 +124,7 @@ class CachesEmbeddedTest < ActionController::TestCase
     CachesEmbeddedTestController.test_value = 1
     get :embedded_actions
     assert_equal "      regular value is 1\n      cached value is 1\n", @response.body
-
+  
     CachesEmbeddedTestController.test_value = 2
     get :embedded_actions
     assert_equal "      regular value is 2\n      cached value is 1\n", @response.body
@@ -142,7 +142,7 @@ class CachesEmbeddedTest < ActionController::TestCase
     get :cached_action, :id => 3
     assert_equal "test (id=3)", @response.body
   end
-
+  
   def test_ensure_caching_only_is_enabled_where_it_should_be
     TestNoCachingController.test_value = 1
     get :call_uncached_controller
@@ -152,7 +152,7 @@ class CachesEmbeddedTest < ActionController::TestCase
     get :call_uncached_controller
     assert_equal "This should never cache. value: 2", @response.body
   end
-
+  
   def test_should_cache_properly_with_namespaced_controllers
     Admin::NamespacedController.test_value = 1
     get :call_namespaced_action
@@ -166,14 +166,14 @@ class CachesEmbeddedTest < ActionController::TestCase
     get :call_namespaced_action
     assert_equal "Namespace cache test. value: 2", @response.body
   end
-
+  
   def test_embedded_caching_overrides
     # This page uses explicit overrides to reverse which embedded actions are cached
     
     CachesEmbeddedTestController.test_value = 1
     get :embedded_overrides
     assert_equal "      regular value is 1\n      cached value is 1\n", @response.body, 'First call should not have been cached'
-
+  
     CachesEmbeddedTestController.test_value = 2
     get :embedded_overrides
     assert_equal "      regular value is 1\n      cached value is 2\n", @response.body, "Second call should reflect cached value"
@@ -182,21 +182,21 @@ class CachesEmbeddedTest < ActionController::TestCase
     get :embedded_overrides
     assert_equal "      regular value is 2\n      cached value is 2\n", @response.body, "Expiration should have forced a refreshed value"
   end
-
+  
   def test_embedded_caching_refresh
     # This page uses explicit overrides to force refreshing the cache
     
     CachesEmbeddedTestController.test_value = 1
     get :forced_refresh
     assert_equal "      regular value is 1\n      cached value is 1\n", @response.body, "First call should not have been cached"
-
+  
     CachesEmbeddedTestController.test_value = 2
     get :forced_refresh
     assert_equal "      regular value is 2\n      cached value is 1\n", @response.body, "Second call should reflect the cached value"
     
     get :forced_refresh, :refresh => true
     assert_equal "      regular value is 2\n      cached value is 2\n", @response.body, "Call with refresh should reflect the new valu"
-
+  
     CachesEmbeddedTestController.test_value = 3
     get :forced_refresh
     assert_equal "      regular value is 3\n      cached value is 2\n", @response.body, "Another call without refresh should reflect the cached value"
@@ -220,17 +220,17 @@ class CachesEmbeddedTest < ActionController::TestCase
   end
 
   def test_caches_embedded_with_custom_options_for_cache_name
-    CachesEmbeddedTestController.test_value = 1
-    get :embedded_variable_actions
-    assert_equal "      regular value is 1\n      cached value is 1\n", @response.body, 'First call should not have been cached'
-
-    CachesEmbeddedTestController.test_value = 2
-    get :embedded_variable_actions
-    assert_equal "      regular value is 2\n      cached value is 1\n", @response.body, "Second call should reflect cached value"
-
-    CachesEmbeddedTestController.another_value = 2
-    get :embedded_variable_actions
-    assert_equal "      regular value is 2\n      cached value is 2\n", @response.body, "Third call should reflect updated value since variable in cache name changed"
-  end
+     CachesEmbeddedTestController.test_value = 1
+     get :embedded_variable_actions
+     assert_equal "      regular value is 1\n      cached value is 1\n", @response.body, 'First call should not have been cached'
+   
+     CachesEmbeddedTestController.test_value = 2
+     get :embedded_variable_actions
+     assert_equal "      regular value is 2\n      cached value is 1\n", @response.body, "Second call should reflect cached value"
+   
+     CachesEmbeddedTestController.another_value = 2
+     get :embedded_variable_actions
+     assert_equal "      regular value is 2\n      cached value is 2\n", @response.body, "Third call should reflect updated value since variable in cache name changed"
+   end
 end
 
